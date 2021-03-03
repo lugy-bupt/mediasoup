@@ -162,7 +162,8 @@ mod router {
             });
 
             unsafe {
-                libc::kill(worker.pid() as i32, libc::SIGINT);
+                // TODO
+                // libc::kill(worker.pid() as i32, libc::SIGINT);
             }
 
             worker_close_rx

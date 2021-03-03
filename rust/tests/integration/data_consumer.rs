@@ -599,7 +599,8 @@ mod data_consumer {
             });
 
             unsafe {
-                libc::kill(worker.pid() as i32, libc::SIGINT);
+                // TODO
+                // libc::kill(worker.pid() as i32, libc::SIGINT);
             }
 
             transport_close_rx

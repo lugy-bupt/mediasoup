@@ -146,7 +146,8 @@ mod worker {
 
             let dump = worker.dump().await.expect("Failed to dump worker");
 
-            assert_eq!(dump.pid, worker.pid());
+            // TODO
+            // assert_eq!(dump.pid, worker.pid());
             assert_eq!(dump.router_ids, vec![]);
         });
     }
@@ -210,7 +211,8 @@ mod worker {
                 });
 
                 unsafe {
-                    libc::kill(worker.pid() as i32, signal);
+                    // TODO
+                    // libc::kill(worker.pid() as i32, signal);
                 }
 
                 dead_rx.await.expect("Failed to receive dead event");
@@ -250,7 +252,8 @@ mod worker {
                 libc::SIGUSR2,
             ] {
                 unsafe {
-                    libc::kill(worker.pid() as i32, signal);
+                    // TODO
+                    // libc::kill(worker.pid() as i32, signal);
                 }
             }
 
