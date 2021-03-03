@@ -26,25 +26,16 @@
 #include <map>
 #include <string>
 
-static constexpr int ConsumerChannelFd{ 3 };
-static constexpr int ProducerChannelFd{ 4 };
-static constexpr int PayloadConsumerChannelFd{ 5 };
-static constexpr int PayloadProducerChannelFd{ 6 };
-
-void IgnoreSignals();
-
-extern "C" int run(int argc, char* argv[])
+extern "C" int run(
+    int argc,
+    char* argv[],
+    char* version,
+    int consumerChannelFd,
+    int producerChannelFd,
+    int payloadConsumeChannelFd,
+    int payloadProduceChannelFd
+)
 {
-	// Ensure we are called by our Node library.
-	if (!std::getenv("MEDIASOUP_VERSION"))
-	{
-		MS_ERROR_STD("you don't seem to be my real father!");
-
-		std::_Exit(EXIT_FAILURE);
-	}
-
-	std::string version = std::getenv("MEDIASOUP_VERSION");
-
 	// Initialize libuv stuff (we need it for the Channel).
 	DepLibUV::ClassInit();
 
@@ -56,25 +47,25 @@ extern "C" int run(int argc, char* argv[])
 
 	try
 	{
-		channel = new Channel::UnixStreamSocket(ConsumerChannelFd, ProducerChannelFd);
+		channel = new Channel::UnixStreamSocket(consumerChannelFd, producerChannelFd);
 	}
 	catch (const MediaSoupError& error)
 	{
 		MS_ERROR_STD("error creating the Channel: %s", error.what());
 
-		std::_Exit(EXIT_FAILURE);
+		return 1;
 	}
 
 	try
 	{
 		payloadChannel =
-		  new PayloadChannel::UnixStreamSocket(PayloadConsumerChannelFd, PayloadProducerChannelFd);
+		  new PayloadChannel::UnixStreamSocket(payloadConsumeChannelFd, payloadProduceChannelFd);
 	}
 	catch (const MediaSoupError& error)
 	{
 		MS_ERROR_STD("error creating the RTC Channel: %s", error.what());
 
-		std::_Exit(EXIT_FAILURE);
+		return 1;
 	}
 
 	// Initialize the Logger.
@@ -89,16 +80,16 @@ extern "C" int run(int argc, char* argv[])
 		MS_ERROR_STD("settings error: %s", error.what());
 
 		// 42 is a custom exit code to notify "settings error" to the Node library.
-		std::_Exit(42);
+		return 42;
 	}
 	catch (const MediaSoupError& error)
 	{
 		MS_ERROR_STD("unexpected settings error: %s", error.what());
 
-		std::_Exit(EXIT_FAILURE);
+		return 1;
 	}
 
-	MS_DEBUG_TAG(info, "starting mediasoup-worker process [version:%s]", version.c_str());
+	MS_DEBUG_TAG(info, "starting mediasoup-worker process [version:%s]", version);
 
 #if defined(MS_LITTLE_ENDIAN)
 	MS_DEBUG_TAG(info, "little-endian CPU detected");
@@ -132,9 +123,6 @@ extern "C" int run(int argc, char* argv[])
 		Channel::Notifier::ClassInit(channel);
 		PayloadChannel::Notifier::ClassInit(payloadChannel);
 
-		// Ignore some signals.
-		IgnoreSignals();
-
 		// Run the Worker.
 		Worker worker(channel, payloadChannel);
 
@@ -150,51 +138,12 @@ extern "C" int run(int argc, char* argv[])
 		// process.
 		uv_sleep(200);
 
-		std::_Exit(EXIT_SUCCESS);
+		return 0;
 	}
 	catch (const MediaSoupError& error)
 	{
 		MS_ERROR_STD("failure exit: %s", error.what());
 
-		std::_Exit(EXIT_FAILURE);
+		return 1;
 	}
-}
-
-void IgnoreSignals()
-{
-#ifndef _WIN32
-	MS_TRACE();
-
-	int err;
-	struct sigaction act; // NOLINT(cppcoreguidelines-pro-type-member-init)
-
-	// clang-format off
-	std::map<std::string, int> ignoredSignals =
-	{
-		{ "PIPE", SIGPIPE },
-		{ "HUP",  SIGHUP  },
-		{ "ALRM", SIGALRM },
-		{ "USR1", SIGUSR1 },
-		{ "USR2", SIGUSR2 }
-	};
-	// clang-format on
-
-	act.sa_handler = SIG_IGN; // NOLINT(cppcoreguidelines-pro-type-cstyle-cast)
-	act.sa_flags   = 0;
-	err            = sigfillset(&act.sa_mask);
-
-	if (err != 0)
-		MS_THROW_ERROR("sigfillset() failed: %s", std::strerror(errno));
-
-	for (auto& kv : ignoredSignals)
-	{
-		const auto& sigName = kv.first;
-		int sigId           = kv.second;
-
-		err = sigaction(sigId, &act, nullptr);
-
-		if (err != 0)
-			MS_THROW_ERROR("sigaction() failed for signal %s: %s", sigName.c_str(), std::strerror(errno));
-	}
-#endif
 }
