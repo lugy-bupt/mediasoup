@@ -23,8 +23,8 @@ namespace PayloadChannel
 	static uint8_t WriteBuffer[NsMessageMaxLen];
 
 	/* Instance methods. */
-	UnixStreamSocket::UnixStreamSocket(int consumerFd, int producerFd)
-	  : consumerSocket(consumerFd, NsMessageMaxLen, this), producerSocket(producerFd, NsMessageMaxLen)
+	UnixStreamSocket::UnixStreamSocket(DepLibUV* depLibUV, int consumerFd, int producerFd)
+	  : depLibUV(depLibUV), consumerSocket(consumerFd, NsMessageMaxLen, this), producerSocket(producerFd, NsMessageMaxLen, this)
 	{
 		MS_TRACE();
 	}
@@ -112,6 +112,13 @@ namespace PayloadChannel
 		size_t nsLen = nsNumLen + nsPayloadLen + 2;
 
 		this->producerSocket.Write(WriteBuffer, nsLen);
+	}
+
+	DepLibUV* UnixStreamSocket::GetDepLibUV(ConsumerSocket* /*consumerSocket*/)
+	{
+		MS_TRACE_STD();
+
+		return this->depLibUV;
 	}
 
 	void UnixStreamSocket::OnConsumerSocketMessage(
@@ -211,7 +218,7 @@ namespace PayloadChannel
 	}
 
 	ConsumerSocket::ConsumerSocket(int fd, size_t bufferSize, Listener* listener)
-	  : ::UnixStreamSocket(fd, bufferSize, ::UnixStreamSocket::Role::CONSUMER), listener(listener)
+	  : ::UnixStreamSocket(listener->GetDepLibUV(this), fd, bufferSize, ::UnixStreamSocket::Role::CONSUMER), listener(listener)
 	{
 		MS_TRACE();
 	}
@@ -349,8 +356,15 @@ namespace PayloadChannel
 		this->listener->OnConsumerSocketClosed(this);
 	}
 
-	ProducerSocket::ProducerSocket(int fd, size_t bufferSize)
-	  : ::UnixStreamSocket(fd, bufferSize, ::UnixStreamSocket::Role::PRODUCER)
+	DepLibUV* UnixStreamSocket::GetDepLibUV(ProducerSocket* /*producerSocket*/)
+	{
+		MS_TRACE_STD();
+
+		return this->depLibUV;
+	}
+
+	ProducerSocket::ProducerSocket(int fd, size_t bufferSize, Listener* listener)
+	  : ::UnixStreamSocket(listener->GetDepLibUV(this), fd, bufferSize, ::UnixStreamSocket::Role::PRODUCER)
 	{
 		MS_TRACE();
 	}

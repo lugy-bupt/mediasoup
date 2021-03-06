@@ -1474,6 +1474,13 @@ namespace RTC
 		return this->producerRtpStreams.at(this->tsReferenceSpatialLayer);
 	}
 
+	inline DepLibUV* SimulcastConsumer::GetDepLibUV(RTC::RtpStream* /*rtpStream*/)
+	{
+		MS_TRACE();
+
+		return this->listener->GetDepLibUV(this);
+	}
+
 	inline void SimulcastConsumer::OnRtpStreamScore(
 	  RTC::RtpStream* /*rtpStream*/, uint8_t /*score*/, uint8_t /*previousScore*/)
 	{

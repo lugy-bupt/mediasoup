@@ -25,7 +25,7 @@ namespace RTC
 	class Router : public RTC::Transport::Listener
 	{
 	public:
-		explicit Router(const std::string& id);
+		explicit Router(DepLibUV* depLibUV, const std::string& id);
 		virtual ~Router();
 
 	public:
@@ -43,6 +43,7 @@ namespace RTC
 
 		/* Pure virtual methods inherited from RTC::Transport::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(RTC::Transport* transport) override;
 		void OnTransportNewProducer(RTC::Transport* transport, RTC::Producer* producer) override;
 		void OnTransportProducerClosed(RTC::Transport* transport, RTC::Producer* producer) override;
 		void OnTransportProducerPaused(RTC::Transport* transport, RTC::Producer* producer) override;
@@ -89,6 +90,7 @@ namespace RTC
 
 	public:
 		// Passed by argument.
+		DepLibUV* depLibUV;
 		const std::string id;
 
 	private:

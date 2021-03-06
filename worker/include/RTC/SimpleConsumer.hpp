@@ -64,6 +64,7 @@ namespace RTC
 
 		/* Pure virtual methods inherited from RtpStreamSend::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(RTC::RtpStream* rtpStream) override;
 		void OnRtpStreamScore(RTC::RtpStream* rtpStream, uint8_t score, uint8_t previousScore) override;
 		void OnRtpStreamRetransmitRtpPacket(RTC::RtpStreamSend* rtpStream, RTC::RtpPacket* packet) override;
 

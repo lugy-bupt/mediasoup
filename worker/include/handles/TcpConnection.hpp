@@ -2,6 +2,7 @@
 #define MS_TCP_CONNECTION_HPP
 
 #include "common.hpp"
+#include "DepLibUV.hpp"
 #include <uv.h>
 #include <string>
 
@@ -17,6 +18,7 @@ public:
 		virtual ~Listener() = default;
 
 	public:
+		virtual DepLibUV* GetDepLibUV(TcpConnection* connection) = 0;
 		virtual void OnTcpConnectionClosed(TcpConnection* connection) = 0;
 	};
 

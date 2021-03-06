@@ -12,7 +12,7 @@ namespace RTC
 
 	UdpSocket::UdpSocket(Listener* listener, std::string& ip)
 	  : // This may throw.
-	    ::UdpSocket::UdpSocket(PortManager::BindUdp(ip)), listener(listener)
+	    ::UdpSocket::UdpSocket(PortManager::BindUdp(listener->GetDepLibUV(this), ip)), listener(listener)
 	{
 		MS_TRACE();
 	}

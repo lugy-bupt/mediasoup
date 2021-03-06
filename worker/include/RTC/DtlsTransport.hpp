@@ -63,6 +63,7 @@ namespace RTC
 		class Listener
 		{
 		public:
+			virtual DepLibUV* GetDepLibUV(const RTC::DtlsTransport* dtlsTransport) = 0;
 			// DTLS is in the process of negotiating a secure connection. Incoming
 			// media can flow through.
 			// NOTE: The caller MUST NOT call any method during this callback.
@@ -203,6 +204,7 @@ namespace RTC
 
 		/* Pure virtual methods inherited from Timer::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(Timer* timer) override;
 		void OnTimer(Timer* timer) override;
 
 	private:

@@ -316,6 +316,13 @@ namespace RTC
 		this->listener->OnTransportCongestionControlServerSendRtcpPacket(this, &packet);
 	}
 
+	inline DepLibUV* TransportCongestionControlServer::GetDepLibUV(Timer* timer)
+	{
+		MS_TRACE();
+
+		return this->listener->GetDepLibUV(this);
+	}
+
 	inline void TransportCongestionControlServer::OnTimer(Timer* timer)
 	{
 		MS_TRACE();

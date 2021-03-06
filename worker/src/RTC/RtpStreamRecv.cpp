@@ -763,6 +763,13 @@ namespace RTC
 		RtpStream::UpdateScore(score);
 	}
 
+	inline DepLibUV* RtpStreamRecv::GetDepLibUV(Timer* timer)
+	{
+		MS_TRACE();
+
+		return this->listener->GetDepLibUV(this);
+	}
+
 	inline void RtpStreamRecv::OnTimer(Timer* timer)
 	{
 		MS_TRACE();
@@ -779,6 +786,13 @@ namespace RTC
 
 			ResetScore(0, /*notify*/ true);
 		}
+	}
+
+	inline DepLibUV* RtpStreamRecv::GetDepLibUV()
+	{
+		MS_TRACE();
+
+		return this->listener->GetDepLibUV(this);
 	}
 
 	inline void RtpStreamRecv::OnNackGeneratorNackRequired(const std::vector<uint16_t>& seqNumbers)

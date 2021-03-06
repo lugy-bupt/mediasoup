@@ -27,6 +27,7 @@ namespace RTC
 		class Listener
 		{
 		public:
+			virtual DepLibUV* GetDepLibUV(RTC::Producer* producer)  = 0;
 			virtual void OnProducerPaused(RTC::Producer* producer)  = 0;
 			virtual void OnProducerResumed(RTC::Producer* producer) = 0;
 			virtual void OnProducerNewRtpStream(
@@ -141,6 +142,7 @@ namespace RTC
 
 		/* Pure virtual methods inherited from RTC::RtpStreamRecv::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(RTC::RtpStream* rtpStream) override;
 		void OnRtpStreamScore(RTC::RtpStream* rtpStream, uint8_t score, uint8_t previousScore) override;
 		void OnRtpStreamSendRtcpPacket(RTC::RtpStreamRecv* rtpStream, RTC::RTCP::Packet* packet) override;
 		void OnRtpStreamNeedWorstRemoteFractionLost(
@@ -148,6 +150,7 @@ namespace RTC
 
 		/* Pure virtual methods inherited from RTC::KeyFrameRequestManager::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(RTC::KeyFrameRequestManager* keyFrameRequestManager) override;
 		void OnKeyFrameNeeded(RTC::KeyFrameRequestManager* keyFrameRequestManager, uint32_t ssrc) override;
 
 	public:

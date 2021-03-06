@@ -1,6 +1,7 @@
 #define MS_CLASS "KeyFrameRequestManager"
 // #define MS_LOG_DEV_LEVEL 3
 
+#include "DepLibUV.hpp"
 #include "RTC/KeyFrameRequestManager.hpp"
 #include "Logger.hpp"
 
@@ -23,6 +24,13 @@ RTC::PendingKeyFrameInfo::~PendingKeyFrameInfo()
 
 	this->timer->Stop();
 	delete this->timer;
+}
+
+inline DepLibUV* RTC::PendingKeyFrameInfo::GetDepLibUV(Timer* timer)
+{
+	MS_TRACE();
+
+	return this->listener->GetDepLibUV(this);
 }
 
 inline void RTC::PendingKeyFrameInfo::OnTimer(Timer* timer)
@@ -51,6 +59,13 @@ RTC::KeyFrameRequestDelayer::~KeyFrameRequestDelayer()
 
 	this->timer->Stop();
 	delete this->timer;
+}
+
+inline DepLibUV* RTC::KeyFrameRequestDelayer::GetDepLibUV(Timer* timer)
+{
+	MS_TRACE();
+
+	return this->listener->GetDepLibUV(this);
 }
 
 inline void RTC::KeyFrameRequestDelayer::OnTimer(Timer* timer)
@@ -194,6 +209,13 @@ void RTC::KeyFrameRequestManager::KeyFrameReceived(uint32_t ssrc)
 	this->mapSsrcPendingKeyFrameInfo.erase(it);
 }
 
+inline DepLibUV* RTC::KeyFrameRequestManager::GetDepLibUV(PendingKeyFrameInfo* pendingKeyFrameInfo)
+{
+	MS_TRACE();
+
+	return this->listener->GetDepLibUV(this);
+}
+
 inline void RTC::KeyFrameRequestManager::OnKeyFrameRequestTimeout(PendingKeyFrameInfo* pendingKeyFrameInfo)
 {
 	MS_TRACE();
@@ -219,6 +241,13 @@ inline void RTC::KeyFrameRequestManager::OnKeyFrameRequestTimeout(PendingKeyFram
 	MS_DEBUG_DEV("requesting key frame on timeout");
 
 	this->listener->OnKeyFrameNeeded(this, pendingKeyFrameInfo->GetSsrc());
+}
+
+inline DepLibUV* RTC::KeyFrameRequestManager::GetDepLibUV(KeyFrameRequestDelayer* keyFrameRequestDelayer)
+{
+	MS_TRACE();
+
+	return this->listener->GetDepLibUV(this);
 }
 
 inline void RTC::KeyFrameRequestManager::OnKeyFrameDelayTimeout(

@@ -135,7 +135,7 @@ void TcpConnection::Setup(
 	MS_TRACE();
 
 	// Set the UV handle.
-	int err = uv_tcp_init(DepLibUV::GetLoop(), this->uvHandle);
+	int err = uv_tcp_init(listener->GetDepLibUV(this)->GetLoop(), this->uvHandle);
 
 	if (err != 0)
 	{

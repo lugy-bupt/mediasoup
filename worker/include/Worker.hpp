@@ -2,6 +2,7 @@
 #define MS_WORKER_HPP
 
 #include "common.hpp"
+#include "DepLibUV.hpp"
 #include "Channel/Request.hpp"
 #include "Channel/UnixStreamSocket.hpp"
 #include "PayloadChannel/Notification.hpp"
@@ -20,7 +21,7 @@ class Worker : public Channel::UnixStreamSocket::Listener,
                public SignalsHandler::Listener
 {
 public:
-	explicit Worker(Channel::UnixStreamSocket* channel, PayloadChannel::UnixStreamSocket* payloadChannel);
+	explicit Worker(DepLibUV* depLibUV, Channel::UnixStreamSocket* channel, PayloadChannel::UnixStreamSocket* payloadChannel);
 	~Worker();
 
 private:
@@ -30,13 +31,15 @@ private:
 	void SetNewRouterIdFromInternal(json& internal, std::string& routerId) const;
 	RTC::Router* GetRouterFromInternal(json& internal) const;
 
-	/* Methods inherited from Channel::lUnixStreamSocket::Listener. */
+	/* Methods inherited from Channel::UnixStreamSocket::Listener. */
 public:
+	DepLibUV* GetDepLibUV(Channel::UnixStreamSocket* channel) override;
 	void OnChannelRequest(Channel::UnixStreamSocket* channel, Channel::Request* request) override;
 	void OnChannelClosed(Channel::UnixStreamSocket* channel) override;
 
-	/* Methods inherited from PayloadChannel::lUnixStreamSocket::Listener. */
+	/* Methods inherited from PayloadChannel::UnixStreamSocket::Listener. */
 public:
+	DepLibUV* GetDepLibUV(PayloadChannel::UnixStreamSocket* payloadChannel) override;
 	void OnPayloadChannelNotification(
 	  PayloadChannel::UnixStreamSocket* payloadChannel,
 	  PayloadChannel::Notification* notification) override;
@@ -46,10 +49,12 @@ public:
 
 	/* Methods inherited from SignalsHandler::Listener. */
 public:
+	DepLibUV* GetDepLibUV(SignalsHandler* signalsHandler) override;
 	void OnSignal(SignalsHandler* signalsHandler, int signum) override;
 
 private:
 	// Passed by argument.
+	DepLibUV* depLibUV{ nullptr };
 	Channel::UnixStreamSocket* channel{ nullptr };
 	PayloadChannel::UnixStreamSocket* payloadChannel{ nullptr };
 	// Allocated by this.

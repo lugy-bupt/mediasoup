@@ -1,6 +1,7 @@
 #define MS_CLASS "RTC::TcpServer"
 // #define MS_LOG_DEV_LEVEL 3
 
+#include "DepLibUV.hpp"
 #include "RTC/TcpServer.hpp"
 #include "Logger.hpp"
 #include "RTC/PortManager.hpp"
@@ -16,7 +17,7 @@ namespace RTC
 
 	TcpServer::TcpServer(Listener* listener, RTC::TcpConnection::Listener* connListener, std::string& ip)
 	  : // This may throw.
-	    ::TcpServer::TcpServer(RTC::PortManager::BindTcp(ip), 256), listener(listener),
+	    ::TcpServer::TcpServer(RTC::PortManager::BindTcp(listener->GetDepLibUV(this), ip), 256), listener(listener),
 	    connListener(connListener)
 	{
 		MS_TRACE();
@@ -27,6 +28,13 @@ namespace RTC
 		MS_TRACE();
 
 		RTC::PortManager::UnbindTcp(this->localIp, this->localPort);
+	}
+
+	DepLibUV* TcpServer::GetDepLibUV(::TcpConnection* connection)
+	{
+		MS_TRACE();
+
+		return this->listener->GetDepLibUV(this);
 	}
 
 	void TcpServer::UserOnTcpConnectionAlloc()

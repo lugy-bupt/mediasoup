@@ -15,7 +15,7 @@ namespace RTC
 {
 	/* Instance methods. */
 
-	Router::Router(const std::string& id) : id(id)
+	Router::Router(DepLibUV* depLibUV, const std::string& id) : depLibUV(depLibUV), id(id)
 	{
 		MS_TRACE();
 	}
@@ -277,7 +277,7 @@ namespace RTC
 				// This may throw
 				SetNewRtpObserverIdFromInternal(request->internal, rtpObserverId);
 
-				auto* audioLevelObserver = new RTC::AudioLevelObserver(rtpObserverId, request->data);
+				auto* audioLevelObserver = new RTC::AudioLevelObserver(this->depLibUV, rtpObserverId, request->data);
 
 				// Insert into the map.
 				this->mapRtpObservers[rtpObserverId] = audioLevelObserver;
@@ -511,6 +511,13 @@ namespace RTC
 		RTC::Producer* producer = it->second;
 
 		return producer;
+	}
+
+	inline DepLibUV* Router::GetDepLibUV(RTC::Transport* /*transport*/)
+	{
+		MS_TRACE();
+
+		return this->depLibUV;
 	}
 
 	inline void Router::OnTransportNewProducer(RTC::Transport* /*transport*/, RTC::Producer* producer)

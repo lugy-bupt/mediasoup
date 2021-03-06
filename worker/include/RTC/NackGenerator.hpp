@@ -2,6 +2,7 @@
 #define MS_RTC_NACK_GENERATOR_HPP
 
 #include "common.hpp"
+#include "DepLibUV.hpp"
 #include "RTC/RtpPacket.hpp"
 #include "RTC/SeqManager.hpp"
 #include "handles/Timer.hpp"
@@ -17,6 +18,7 @@ namespace RTC
 		class Listener
 		{
 		public:
+			virtual DepLibUV* GetDepLibUV() = 0;
 			virtual void OnNackGeneratorNackRequired(const std::vector<uint16_t>& seqNumbers) = 0;
 			virtual void OnNackGeneratorKeyFrameRequired()                                    = 0;
 		};
@@ -64,6 +66,7 @@ namespace RTC
 
 		/* Pure virtual methods inherited from Timer::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(Timer* timer) override;
 		void OnTimer(Timer* timer) override;
 
 	private:

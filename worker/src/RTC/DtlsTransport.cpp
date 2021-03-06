@@ -1449,6 +1449,13 @@ namespace RTC
 		// receipt of a close alert does not work (the flag is set after this callback).
 	}
 
+	inline DepLibUV* DtlsTransport::GetDepLibUV(Timer* /*timer*/)
+	{
+		MS_TRACE();
+
+		return this->listener->GetDepLibUV(this);
+	}
+
 	inline void DtlsTransport::OnTimer(Timer* /*timer*/)
 	{
 		MS_TRACE();

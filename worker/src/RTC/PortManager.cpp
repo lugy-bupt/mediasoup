@@ -31,7 +31,7 @@ namespace RTC
 
 	/* Class methods. */
 
-	uv_handle_t* PortManager::Bind(Transport transport, std::string& ip)
+	uv_handle_t* PortManager::Bind(DepLibUV* depLibUV, Transport transport, std::string& ip)
 	{
 		MS_TRACE();
 
@@ -163,12 +163,12 @@ namespace RTC
 				case Transport::UDP:
 					uvHandle = reinterpret_cast<uv_handle_t*>(new uv_udp_t());
 					err      = uv_udp_init_ex(
-            DepLibUV::GetLoop(), reinterpret_cast<uv_udp_t*>(uvHandle), UV_UDP_RECVMMSG);
+            depLibUV->GetLoop(), reinterpret_cast<uv_udp_t*>(uvHandle), UV_UDP_RECVMMSG);
 					break;
 
 				case Transport::TCP:
 					uvHandle = reinterpret_cast<uv_handle_t*>(new uv_tcp_t());
-					err      = uv_tcp_init(DepLibUV::GetLoop(), reinterpret_cast<uv_tcp_t*>(uvHandle));
+					err      = uv_tcp_init(depLibUV->GetLoop(), reinterpret_cast<uv_tcp_t*>(uvHandle));
 					break;
 			}
 

@@ -1,6 +1,7 @@
 #define MS_CLASS "RTC::AudioLevelObserver"
 // #define MS_LOG_DEV_LEVEL 3
 
+#include "DepLibUV.hpp"
 #include "RTC/AudioLevelObserver.hpp"
 #include "Logger.hpp"
 #include "MediaSoupErrors.hpp"
@@ -14,7 +15,8 @@ namespace RTC
 {
 	/* Instance methods. */
 
-	AudioLevelObserver::AudioLevelObserver(const std::string& id, json& data) : RTC::RtpObserver(id)
+	AudioLevelObserver::AudioLevelObserver(DepLibUV* depLibUV, const std::string& id, json& data)
+	  : RTC::RtpObserver(id), depLibUV(depLibUV)
 	{
 		MS_TRACE();
 
@@ -211,5 +213,12 @@ namespace RTC
 		MS_TRACE();
 
 		Update();
+	}
+
+	inline DepLibUV* AudioLevelObserver::GetDepLibUV(Timer* /*timer*/)
+	{
+		MS_TRACE();
+
+		return this->depLibUV;
 	}
 } // namespace RTC

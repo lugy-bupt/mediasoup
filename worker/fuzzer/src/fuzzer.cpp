@@ -103,11 +103,12 @@ int Init()
 
 	Settings::configuration.logLevel = logLevel;
 
+	auto* depLibUV = new DepLibUV();
+
 	// Initialize static stuff.
-	DepLibUV::ClassInit();
 	DepOpenSSL::ClassInit();
 	DepLibSRTP::ClassInit();
-	DepUsrSCTP::ClassInit();
+	DepUsrSCTP::ClassInit(depLibUV);
 	DepLibWebRTC::ClassInit();
 	Utils::Crypto::ClassInit();
 

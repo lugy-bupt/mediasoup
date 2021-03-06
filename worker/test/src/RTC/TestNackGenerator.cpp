@@ -1,3 +1,4 @@
+#include "helpers.hpp"
 #include "common.hpp"
 #include "RTC/Codecs/PayloadDescriptorHandler.hpp"
 #include "RTC/NackGenerator.hpp"
@@ -66,6 +67,11 @@ private:
 
 class TestNackGeneratorListener : public NackGenerator::Listener
 {
+	DepLibUV* GetDepLibUV() override
+	{
+		return helpers::getDepLibUV();
+	}
+
 	void OnNackGeneratorNackRequired(const std::vector<uint16_t>& seqNumbers) override
 	{
 		this->nackRequiredTriggered = true;

@@ -54,6 +54,7 @@ namespace RTC
 		class Listener
 		{
 		public:
+			virtual DepLibUV* GetDepLibUV(RTC::Transport* transport) = 0;
 			virtual void OnTransportNewProducer(RTC::Transport* transport, RTC::Producer* producer) = 0;
 			virtual void OnTransportProducerClosed(RTC::Transport* transport, RTC::Producer* producer) = 0;
 			virtual void OnTransportProducerPaused(RTC::Transport* transport, RTC::Producer* producer) = 0;
@@ -175,6 +176,7 @@ namespace RTC
 
 		/* Pure virtual methods inherited from RTC::Producer::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(RTC::Producer* producer) override;
 		void OnProducerPaused(RTC::Producer* producer) override;
 		void OnProducerResumed(RTC::Producer* producer) override;
 		void OnProducerNewRtpStream(
@@ -190,6 +192,7 @@ namespace RTC
 
 		/* Pure virtual methods inherited from RTC::Consumer::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(RTC::Consumer* consumer) override;
 		void OnConsumerSendRtpPacket(RTC::Consumer* consumer, RTC::RtpPacket* packet) override;
 		void OnConsumerRetransmitRtpPacket(RTC::Consumer* consumer, RTC::RtpPacket* packet) override;
 		void OnConsumerKeyFrameRequested(RTC::Consumer* consumer, uint32_t mappedSsrc) override;
@@ -231,6 +234,7 @@ namespace RTC
 
 		/* Pure virtual methods inherited from RTC::TransportCongestionControlClient::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(RTC::TransportCongestionControlClient* tccClient) override;
 		void OnTransportCongestionControlClientBitrates(
 		  RTC::TransportCongestionControlClient* tccClient,
 		  RTC::TransportCongestionControlClient::Bitrates& bitrates) override;
@@ -241,6 +245,7 @@ namespace RTC
 
 		/* Pure virtual methods inherited from RTC::TransportCongestionControlServer::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(RTC::TransportCongestionControlServer* tccServer) override;
 		void OnTransportCongestionControlServerSendRtcpPacket(
 		  RTC::TransportCongestionControlServer* tccServer, RTC::RTCP::Packet* packet) override;
 
@@ -255,6 +260,7 @@ namespace RTC
 
 		/* Pure virtual methods inherited from Timer::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(Timer* timer) override;
 		void OnTimer(Timer* timer) override;
 
 	public:
@@ -262,13 +268,14 @@ namespace RTC
 		const std::string id;
 
 	protected:
+		// Passed by argument.
+		Listener* listener{ nullptr };
+
 		size_t maxMessageSize{ 262144u };
 		// Allocated by this.
 		RTC::SctpAssociation* sctpAssociation{ nullptr };
 
 	private:
-		// Passed by argument.
-		Listener* listener{ nullptr };
 		// Allocated by this.
 		std::unordered_map<std::string, RTC::Producer*> mapProducers;
 		std::unordered_map<std::string, RTC::Consumer*> mapConsumers;

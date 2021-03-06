@@ -9,11 +9,16 @@ using namespace RTC;
 SCENARIO("KeyFrameRequestManager", "[rtp][keyframe]")
 {
 	// Start LibUV.
-	DepLibUV::ClassInit();
+	static auto* depLibUV = new DepLibUV();
 
 	class TestKeyFrameRequestManagerListener : public KeyFrameRequestManager::Listener
 	{
 	public:
+		DepLibUV* GetDepLibUV(KeyFrameRequestManager* /*keyFrameRequestManager */) override
+		{
+			return depLibUV;
+		}
+
 		void OnKeyFrameNeeded(KeyFrameRequestManager* /*keyFrameRequestManager */, uint32_t /*ssrc*/) override
 		{
 			this->onKeyFrameNeededTimesCalled++;
@@ -37,7 +42,7 @@ SCENARIO("KeyFrameRequestManager", "[rtp][keyframe]")
 
 		keyFrameRequestManager.KeyFrameNeeded(1111);
 
-		DepLibUV::RunLoop();
+		depLibUV->RunLoop();
 
 		REQUIRE(listener.onKeyFrameNeededTimesCalled == 2);
 	}
@@ -52,7 +57,7 @@ SCENARIO("KeyFrameRequestManager", "[rtp][keyframe]")
 		keyFrameRequestManager.KeyFrameNeeded(1111);
 		keyFrameRequestManager.KeyFrameNeeded(1111);
 
-		DepLibUV::RunLoop();
+		depLibUV->RunLoop();
 
 		REQUIRE(listener.onKeyFrameNeededTimesCalled == 2);
 	}
@@ -65,7 +70,7 @@ SCENARIO("KeyFrameRequestManager", "[rtp][keyframe]")
 		keyFrameRequestManager.KeyFrameNeeded(1111);
 		keyFrameRequestManager.KeyFrameReceived(1111);
 
-		DepLibUV::RunLoop();
+		depLibUV->RunLoop();
 
 		REQUIRE(listener.onKeyFrameNeededTimesCalled == 1);
 	}
@@ -78,7 +83,7 @@ SCENARIO("KeyFrameRequestManager", "[rtp][keyframe]")
 		keyFrameRequestManager.KeyFrameNeeded(1111);
 		keyFrameRequestManager.ForceKeyFrameNeeded(1111);
 
-		DepLibUV::RunLoop();
+		depLibUV->RunLoop();
 
 		REQUIRE(listener.onKeyFrameNeededTimesCalled == 3);
 	}
@@ -92,7 +97,7 @@ SCENARIO("KeyFrameRequestManager", "[rtp][keyframe]")
 		keyFrameRequestManager.ForceKeyFrameNeeded(1111);
 		keyFrameRequestManager.KeyFrameReceived(1111);
 
-		DepLibUV::RunLoop();
+		depLibUV->RunLoop();
 
 		REQUIRE(listener.onKeyFrameNeededTimesCalled == 2);
 	}

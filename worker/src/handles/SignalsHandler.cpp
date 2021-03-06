@@ -60,7 +60,7 @@ void SignalsHandler::AddSignal(int signum, const std::string& name)
 
 	uvHandle->data = static_cast<void*>(this);
 
-	err = uv_signal_init(DepLibUV::GetLoop(), uvHandle);
+	err = uv_signal_init(this->listener->GetDepLibUV(this)->GetLoop(), uvHandle);
 
 	if (err != 0)
 	{

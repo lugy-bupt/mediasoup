@@ -2,11 +2,18 @@
 #define MS_TEST_HELPERS_HPP
 
 #include "common.hpp"
+#include "DepLibUV.hpp"
 #include <fstream>
 #include <string>
 
 namespace helpers
 {
+    static DepLibUV* getDepLibUV() {
+        static auto* depLibUV = new DepLibUV();
+
+        return depLibUV;
+    }
+
 	inline bool readBinaryFile(const char* file, uint8_t* buffer, size_t* len)
 	{
 		std::string filePath = "test/" + std::string(file);

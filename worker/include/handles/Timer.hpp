@@ -2,6 +2,7 @@
 #define MS_TIMER_HPP
 
 #include "common.hpp"
+#include "DepLibUV.hpp"
 #include <uv.h>
 
 class Timer
@@ -13,6 +14,7 @@ public:
 		virtual ~Listener() = default;
 
 	public:
+		virtual DepLibUV* GetDepLibUV(Timer* timer) = 0;
 		virtual void OnTimer(Timer* timer) = 0;
 	};
 

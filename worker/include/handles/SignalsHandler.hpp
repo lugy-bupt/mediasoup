@@ -1,6 +1,7 @@
 #ifndef MS_SIGNALS_HANDLER_HPP
 #define MS_SIGNALS_HANDLER_HPP
 
+#include "DepLibUV.hpp"
 #include <uv.h>
 #include <string>
 #include <vector>
@@ -14,6 +15,7 @@ public:
 		virtual ~Listener() = default;
 
 	public:
+		virtual DepLibUV* GetDepLibUV(SignalsHandler* signalsHandler) = 0;
 		virtual void OnSignal(SignalsHandler* signalsHandler, int signum) = 0;
 	};
 

@@ -21,6 +21,7 @@ private:
 
 		/* Pure virtual methods inherited from Timer::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(Timer* timer) override;
 		void OnTimer(Timer* timer) override;
 
 	private:
@@ -29,7 +30,7 @@ private:
 	};
 
 public:
-	static void ClassInit();
+	static void ClassInit(DepLibUV* depLibUV);
 	static void ClassDestroy();
 	static uintptr_t GetNextSctpAssociationId();
 	static void RegisterSctpAssociation(RTC::SctpAssociation* sctpAssociation);
@@ -37,6 +38,7 @@ public:
 	static RTC::SctpAssociation* RetrieveSctpAssociation(uintptr_t id);
 
 private:
+    static DepLibUV* depLibUV;
 	static Checker* checker;
 	static uint64_t numSctpAssociations;
 	static uintptr_t nextSctpAssociationId;

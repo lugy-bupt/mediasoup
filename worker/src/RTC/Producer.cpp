@@ -1518,6 +1518,11 @@ namespace RTC
 		Channel::Notifier::Emit(this->id, "trace", data);
 	}
 
+	inline DepLibUV* Producer::GetDepLibUV(RTC::RtpStream* /*rtpStream*/)
+	{
+		return this->listener->GetDepLibUV(this);
+	}
+
 	inline void Producer::OnRtpStreamScore(RTC::RtpStream* rtpStream, uint8_t score, uint8_t previousScore)
 	{
 		MS_TRACE();
@@ -1595,6 +1600,11 @@ namespace RTC
 
 		// Notify the listener.
 		this->listener->OnProducerNeedWorstRemoteFractionLost(this, mappedSsrc, worstRemoteFractionLost);
+	}
+
+	inline DepLibUV* Producer::GetDepLibUV(RTC::KeyFrameRequestManager* /*keyFrameRequestManager*/)
+	{
+		return this->listener->GetDepLibUV(this);
 	}
 
 	inline void Producer::OnKeyFrameNeeded(

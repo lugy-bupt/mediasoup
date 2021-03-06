@@ -1,3 +1,4 @@
+#include "helpers.hpp"
 #include "common.hpp"
 #include "RTC/RtpPacket.hpp"
 #include "RTC/RtpStream.hpp"
@@ -15,6 +16,11 @@ SCENARIO("receive RTP packets and trigger NACK", "[rtp][rtpstream]")
 	class RtpStreamRecvListener : public RtpStreamRecv::Listener
 	{
 	public:
+		DepLibUV* GetDepLibUV(RtpStream* /*rtpStream*/) override
+		{
+			return helpers::getDepLibUV();
+		}
+
 		void OnRtpStreamScore(RtpStream* /*rtpStream*/, uint8_t /*score*/, uint8_t /*previousScore*/) override
 		{
 		}

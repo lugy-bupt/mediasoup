@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 	std::string version = std::getenv("MEDIASOUP_VERSION");
 
 	// Initialize libuv stuff (we need it for the Channel).
-	DepLibUV::ClassInit();
+	auto* depLibUV = new DepLibUV();
 
 	// Channel socket (it will be handled and deleted by the Worker).
 	Channel::UnixStreamSocket* channel{ nullptr };
@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
 
 	try
 	{
-		channel = new Channel::UnixStreamSocket(ConsumerChannelFd, ProducerChannelFd);
+		channel = new Channel::UnixStreamSocket(depLibUV, ConsumerChannelFd, ProducerChannelFd);
 	}
 	catch (const MediaSoupError& error)
 	{
@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 	try
 	{
 		payloadChannel =
-		  new PayloadChannel::UnixStreamSocket(PayloadConsumerChannelFd, PayloadProducerChannelFd);
+		  new PayloadChannel::UnixStreamSocket(depLibUV, PayloadConsumerChannelFd, PayloadProducerChannelFd);
 	}
 	catch (const MediaSoupError& error)
 	{
@@ -124,7 +124,7 @@ int main(int argc, char* argv[])
 		// Initialize static stuff.
 		DepOpenSSL::ClassInit();
 		DepLibSRTP::ClassInit();
-		DepUsrSCTP::ClassInit();
+		DepUsrSCTP::ClassInit(depLibUV);
 		DepLibWebRTC::ClassInit();
 		Utils::Crypto::ClassInit();
 		RTC::DtlsTransport::ClassInit();
@@ -136,10 +136,11 @@ int main(int argc, char* argv[])
 		IgnoreSignals();
 
 		// Run the Worker.
-		Worker worker(channel, payloadChannel);
+		Worker worker(depLibUV, channel, payloadChannel);
+
+		delete depLibUV;
 
 		// Free static stuff.
-		DepLibUV::ClassDestroy();
 		DepLibSRTP::ClassDestroy();
 		Utils::Crypto::ClassDestroy();
 		DepLibWebRTC::ClassDestroy();

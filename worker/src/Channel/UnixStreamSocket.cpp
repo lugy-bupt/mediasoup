@@ -1,6 +1,7 @@
 #define MS_CLASS "Channel::UnixStreamSocket"
 // #define MS_LOG_DEV_LEVEL 3
 
+#include "DepLibUV.hpp"
 #include "Channel/UnixStreamSocket.hpp"
 #include "Logger.hpp"
 #include "MediaSoupErrors.hpp"
@@ -22,8 +23,8 @@ namespace Channel
 	static uint8_t WriteBuffer[NsMessageMaxLen];
 
 	/* Instance methods. */
-	UnixStreamSocket::UnixStreamSocket(int consumerFd, int producerFd)
-	  : consumerSocket(consumerFd, NsMessageMaxLen, this), producerSocket(producerFd, NsMessageMaxLen)
+	UnixStreamSocket::UnixStreamSocket(DepLibUV* depLibUV, int consumerFd, int producerFd)
+	  : depLibUV(depLibUV), consumerSocket(consumerFd, NsMessageMaxLen, this), producerSocket(producerFd, NsMessageMaxLen, this)
 	{
 		MS_TRACE_STD();
 	}
@@ -102,6 +103,13 @@ namespace Channel
 		this->producerSocket.Write(WriteBuffer, nsLen);
 	}
 
+	DepLibUV* UnixStreamSocket::GetDepLibUV(ConsumerSocket* /*consumerSocket*/)
+	{
+		MS_TRACE_STD();
+
+		return this->depLibUV;
+	}
+
 	void UnixStreamSocket::OnConsumerSocketMessage(
 	  ConsumerSocket* /*consumerSocket*/, char* msg, size_t msgLen)
 	{
@@ -147,7 +155,7 @@ namespace Channel
 	}
 
 	ConsumerSocket::ConsumerSocket(int fd, size_t bufferSize, Listener* listener)
-	  : ::UnixStreamSocket(fd, bufferSize, ::UnixStreamSocket::Role::CONSUMER), listener(listener)
+	  : ::UnixStreamSocket(listener->GetDepLibUV(this), fd, bufferSize, ::UnixStreamSocket::Role::CONSUMER), listener(listener)
 	{
 		MS_TRACE_STD();
 	}
@@ -285,8 +293,15 @@ namespace Channel
 		this->listener->OnConsumerSocketClosed(this);
 	}
 
-	ProducerSocket::ProducerSocket(int fd, size_t bufferSize)
-	  : ::UnixStreamSocket(fd, bufferSize, ::UnixStreamSocket::Role::PRODUCER)
+	DepLibUV* UnixStreamSocket::GetDepLibUV(ProducerSocket* /*producerSocket*/)
+	{
+		MS_TRACE_STD();
+
+		return this->depLibUV;
+	}
+
+	ProducerSocket::ProducerSocket(int fd, size_t bufferSize, Listener* listener)
+	  : ::UnixStreamSocket(listener->GetDepLibUV(this), fd, bufferSize, ::UnixStreamSocket::Role::PRODUCER)
 	{
 		MS_TRACE_STD();
 	}

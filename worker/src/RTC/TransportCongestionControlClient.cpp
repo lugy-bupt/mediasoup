@@ -345,6 +345,13 @@ namespace RTC
 		return this->probationGenerator->GetNextPacket(size);
 	}
 
+	inline DepLibUV* TransportCongestionControlClient::GetDepLibUV(Timer* timer)
+	{
+		MS_TRACE();
+
+		return this->listener->GetDepLibUV(this);
+	}
+
 	void TransportCongestionControlClient::OnTimer(Timer* timer)
 	{
 		MS_TRACE();

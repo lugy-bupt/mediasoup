@@ -2,6 +2,7 @@
 #define MS_UNIX_STREAM_SOCKET_HPP
 
 #include "common.hpp"
+#include "DepLibUV.hpp"
 #include <uv.h>
 #include <string>
 
@@ -35,7 +36,7 @@ public:
 	};
 
 public:
-	UnixStreamSocket(int fd, size_t bufferSize, UnixStreamSocket::Role role);
+	UnixStreamSocket(DepLibUV* depLibUV, int fd, size_t bufferSize, UnixStreamSocket::Role role);
 	UnixStreamSocket& operator=(const UnixStreamSocket&) = delete;
 	UnixStreamSocket(const UnixStreamSocket&)            = delete;
 	virtual ~UnixStreamSocket();

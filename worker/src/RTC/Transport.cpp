@@ -2448,6 +2448,13 @@ namespace RTC
 		Channel::Notifier::Emit(this->id, "trace", data);
 	}
 
+	inline DepLibUV* Transport::GetDepLibUV(RTC::Producer* producer)
+	{
+		MS_TRACE();
+
+		return this->listener->GetDepLibUV(this);
+	}
+
 	inline void Transport::OnProducerPaused(RTC::Producer* producer)
 	{
 		MS_TRACE();
@@ -2507,6 +2514,13 @@ namespace RTC
 
 		this->listener->OnTransportNeedWorstRemoteFractionLost(
 		  this, producer, mappedSsrc, worstRemoteFractionLost);
+	}
+
+	inline DepLibUV* Transport::GetDepLibUV(RTC::Consumer* consumer)
+	{
+		MS_TRACE();
+
+		return this->listener->GetDepLibUV(this);
 	}
 
 	inline void Transport::OnConsumerSendRtpPacket(RTC::Consumer* consumer, RTC::RtpPacket* packet)
@@ -2892,6 +2906,13 @@ namespace RTC
 		}
 	}
 
+	inline DepLibUV* Transport::GetDepLibUV(RTC::TransportCongestionControlClient* /*tccClient*/)
+	{
+		MS_TRACE();
+
+		return this->listener->GetDepLibUV(this);
+	}
+
 	inline void Transport::OnTransportCongestionControlClientBitrates(
 	  RTC::TransportCongestionControlClient* /*tccClient*/,
 	  RTC::TransportCongestionControlClient::Bitrates& bitrates)
@@ -2990,6 +3011,13 @@ namespace RTC
 		  this->sendProbationTransmission.GetBitrate(DepLibUV::GetTimeMs()));
 	}
 
+	inline DepLibUV* Transport::GetDepLibUV(RTC::TransportCongestionControlServer* /*tccServer*/)
+	{
+		MS_TRACE();
+
+		return this->listener->GetDepLibUV(this);
+	}
+
 	inline void Transport::OnTransportCongestionControlServerSendRtcpPacket(
 	  RTC::TransportCongestionControlServer* /*tccServer*/, RTC::RTCP::Packet* packet)
 	{
@@ -3018,6 +3046,13 @@ namespace RTC
 		// ComputeOutgoingDesiredBitrate();
 	}
 #endif
+
+	inline DepLibUV* Transport::GetDepLibUV(Timer* timer)
+	{
+		MS_TRACE();
+
+		return this->listener->GetDepLibUV(this);
+	}
 
 	inline void Transport::OnTimer(Timer* timer)
 	{

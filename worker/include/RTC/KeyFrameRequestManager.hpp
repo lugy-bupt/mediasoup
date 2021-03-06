@@ -1,6 +1,7 @@
 #ifndef MS_KEY_FRAME_REQUEST_MANAGER_HPP
 #define MS_KEY_FRAME_REQUEST_MANAGER_HPP
 
+#include "DepLibUV.hpp"
 #include "handles/Timer.hpp"
 #include <map>
 
@@ -12,6 +13,7 @@ namespace RTC
 		class Listener
 		{
 		public:
+			virtual DepLibUV* GetDepLibUV(PendingKeyFrameInfo* keyFrameRequestInfo) = 0;
 			virtual void OnKeyFrameRequestTimeout(PendingKeyFrameInfo* keyFrameRequestInfo) = 0;
 		};
 
@@ -38,6 +40,7 @@ namespace RTC
 
 		/* Pure virtual methods inherited from Timer::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(Timer* timer) override;
 		void OnTimer(Timer* timer) override;
 
 	private:
@@ -53,6 +56,7 @@ namespace RTC
 		class Listener
 		{
 		public:
+			virtual DepLibUV* GetDepLibUV(KeyFrameRequestDelayer* keyFrameRequestDelayer) = 0;
 			virtual void OnKeyFrameDelayTimeout(KeyFrameRequestDelayer* keyFrameRequestDelayer) = 0;
 		};
 
@@ -75,6 +79,7 @@ namespace RTC
 
 		/* Pure virtual methods inherited from Timer::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(Timer* timer) override;
 		void OnTimer(Timer* timer) override;
 
 	private:
@@ -91,6 +96,7 @@ namespace RTC
 		class Listener
 		{
 		public:
+			virtual DepLibUV* GetDepLibUV(KeyFrameRequestManager* keyFrameRequestManager) = 0;
 			virtual void OnKeyFrameNeeded(KeyFrameRequestManager* keyFrameRequestManager, uint32_t ssrc) = 0;
 		};
 
@@ -104,10 +110,12 @@ namespace RTC
 
 		/* Pure virtual methods inherited from PendingKeyFrameInfo::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(PendingKeyFrameInfo* pendingKeyFrameInfo) override;
 		void OnKeyFrameRequestTimeout(PendingKeyFrameInfo* pendingKeyFrameInfo) override;
 
 		/* Pure virtual methods inherited from PendingKeyFrameInfo::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(KeyFrameRequestDelayer* keyFrameRequestDelayer) override;
 		void OnKeyFrameDelayTimeout(KeyFrameRequestDelayer* keyFrameRequestDelayer) override;
 
 	private:

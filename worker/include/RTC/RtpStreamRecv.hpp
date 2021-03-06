@@ -79,10 +79,12 @@ namespace RTC
 
 		/* Pure virtual methods inherited from Timer. */
 	protected:
+		DepLibUV* GetDepLibUV(Timer* timer) override;
 		void OnTimer(Timer* timer) override;
 
 		/* Pure virtual methods inherited from RTC::NackGenerator. */
 	protected:
+		DepLibUV* GetDepLibUV() override;
 		void OnNackGeneratorNackRequired(const std::vector<uint16_t>& seqNumbers) override;
 		void OnNackGeneratorKeyFrameRequired() override;
 

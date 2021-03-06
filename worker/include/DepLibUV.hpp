@@ -2,19 +2,17 @@
 #define MS_DEP_LIBUV_HPP
 
 #include "common.hpp"
+#include "DepLibUV.hpp"
 #include <uv.h>
 
 class DepLibUV
 {
 public:
-	static void ClassInit();
-	static void ClassDestroy();
+	DepLibUV();
+	~DepLibUV();
 	static void PrintVersion();
-	static void RunLoop();
-	static uv_loop_t* GetLoop()
-	{
-		return DepLibUV::loop;
-	}
+	void RunLoop();
+	uv_loop_t* GetLoop();
 	static uint64_t GetTimeMs()
 	{
 		return static_cast<uint64_t>(uv_hrtime() / 1000000u);
@@ -41,7 +39,7 @@ public:
 	}
 
 private:
-	static uv_loop_t* loop;
+	uv_loop_t* loop;
 };
 
 #endif

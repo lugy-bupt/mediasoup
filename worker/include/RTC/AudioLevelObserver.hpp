@@ -1,6 +1,7 @@
 #ifndef MS_RTC_AUDIO_LEVEL_OBSERVER_HPP
 #define MS_RTC_AUDIO_LEVEL_OBSERVER_HPP
 
+#include "DepLibUV.hpp"
 #include "RTC/RtpObserver.hpp"
 #include "handles/Timer.hpp"
 #include <json.hpp>
@@ -20,7 +21,7 @@ namespace RTC
 		};
 
 	public:
-		AudioLevelObserver(const std::string& id, json& data);
+		AudioLevelObserver(DepLibUV* depLibUV, const std::string& id, json& data);
 		~AudioLevelObserver() override;
 
 	public:
@@ -36,12 +37,14 @@ namespace RTC
 		void Update();
 		void ResetMapProducerDBovs();
 
-		/* Pure virtual methods inherited from Timer. */
+		/* Methods inherited from Timer::Listener. */
 	protected:
+		DepLibUV* GetDepLibUV(Timer* timer) override;
 		void OnTimer(Timer* timer) override;
 
 	private:
 		// Passed by argument.
+		DepLibUV* depLibUV{ nullptr };
 		uint16_t maxEntries{ 1u };
 		int8_t threshold{ -80 };
 		uint16_t interval{ 1000u };

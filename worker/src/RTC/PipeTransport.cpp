@@ -1,6 +1,7 @@
 #define MS_CLASS "RTC::PipeTransport"
 // #define MS_LOG_DEV_LEVEL 3
 
+#include "DepLibUV.hpp"
 #include "RTC/PipeTransport.hpp"
 #include "Logger.hpp"
 #include "MediaSoupErrors.hpp"
@@ -673,6 +674,13 @@ namespace RTC
 
 		// Pass it to the parent transport.
 		RTC::Transport::ReceiveSctpData(data, len);
+	}
+
+	inline DepLibUV* PipeTransport::GetDepLibUV(RTC::UdpSocket* socket)
+	{
+		MS_TRACE();
+
+		return this->listener->GetDepLibUV(this);
 	}
 
 	inline void PipeTransport::OnUdpSocketPacketReceived(

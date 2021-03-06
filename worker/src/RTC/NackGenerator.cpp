@@ -333,4 +333,11 @@ namespace RTC
 
 		MayRunTimer();
 	}
+
+	inline DepLibUV* NackGenerator::GetDepLibUV(Timer* /*timer*/)
+	{
+		MS_TRACE();
+
+		return this->listener->GetDepLibUV();
+	}
 } // namespace RTC

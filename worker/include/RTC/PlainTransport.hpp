@@ -1,6 +1,7 @@
 #ifndef MS_RTC_PLAIN_TRANSPORT_HPP
 #define MS_RTC_PLAIN_TRANSPORT_HPP
 
+#include "DepLibUV.hpp"
 #include "RTC/SrtpSession.hpp"
 #include "RTC/Transport.hpp"
 #include "RTC/TransportTuple.hpp"
@@ -59,6 +60,7 @@ namespace RTC
 
 		/* Pure virtual methods inherited from RTC::UdpSocket::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(RTC::UdpSocket* socket) override;
 		void OnUdpSocketPacketReceived(
 		  RTC::UdpSocket* socket, const uint8_t* data, size_t len, const struct sockaddr* remoteAddr) override;
 

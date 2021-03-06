@@ -2,6 +2,7 @@
 #define MS_RTC_UDP_SOCKET_HPP
 
 #include "common.hpp"
+#include "DepLibUV.hpp"
 #include "handles/UdpSocket.hpp"
 #include <string>
 
@@ -13,6 +14,7 @@ namespace RTC
 		class Listener
 		{
 		public:
+			virtual DepLibUV* GetDepLibUV(RTC::UdpSocket* socket) = 0;
 			virtual void OnUdpSocketPacketReceived(
 			  RTC::UdpSocket* socket, const uint8_t* data, size_t len, const struct sockaddr* remoteAddr) = 0;
 		};

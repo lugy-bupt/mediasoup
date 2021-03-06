@@ -10,8 +10,8 @@
 
 /* Instance methods. */
 
-Worker::Worker(::Channel::UnixStreamSocket* channel, PayloadChannel::UnixStreamSocket* payloadChannel)
-  : channel(channel), payloadChannel(payloadChannel)
+Worker::Worker(DepLibUV* depLibUV, ::Channel::UnixStreamSocket* channel, PayloadChannel::UnixStreamSocket* payloadChannel)
+  : depLibUV(depLibUV), channel(channel), payloadChannel(payloadChannel)
 {
 	MS_TRACE();
 
@@ -32,7 +32,7 @@ Worker::Worker(::Channel::UnixStreamSocket* channel, PayloadChannel::UnixStreamS
 	Channel::Notifier::Emit(std::to_string(Logger::pid), "running");
 
 	MS_DEBUG_DEV("starting libuv loop");
-	DepLibUV::RunLoop();
+	depLibUV->RunLoop();
 	MS_DEBUG_DEV("libuv loop ended");
 }
 
@@ -188,6 +188,13 @@ RTC::Router* Worker::GetRouterFromInternal(json& internal) const
 	return router;
 }
 
+inline DepLibUV* Worker::GetDepLibUV(Channel::UnixStreamSocket* /*channel*/)
+{
+	MS_TRACE();
+
+	return this->depLibUV;
+}
+
 inline void Worker::OnChannelRequest(Channel::UnixStreamSocket* /*channel*/, Channel::Request* request)
 {
 	MS_TRACE();
@@ -245,7 +252,7 @@ inline void Worker::OnChannelRequest(Channel::UnixStreamSocket* /*channel*/, Cha
 			// This may throw.
 			SetNewRouterIdFromInternal(request->internal, routerId);
 
-			auto* router = new RTC::Router(routerId);
+			auto* router = new RTC::Router(this->depLibUV, routerId);
 
 			this->mapRouters[routerId] = router;
 
@@ -296,6 +303,13 @@ inline void Worker::OnChannelClosed(Channel::UnixStreamSocket* /*socket*/)
 	Close();
 }
 
+inline DepLibUV* Worker::GetDepLibUV(PayloadChannel::UnixStreamSocket* /*payloadChannel*/)
+{
+	MS_TRACE();
+
+	return this->depLibUV;
+}
+
 inline void Worker::OnPayloadChannelNotification(
   PayloadChannel::UnixStreamSocket* /*payloadChannel*/, PayloadChannel::Notification* notification)
 {
@@ -334,6 +348,13 @@ inline void Worker::OnPayloadChannelClosed(PayloadChannel::UnixStreamSocket* /*p
 	MS_ERROR_STD("payloadChannel remotely closed, closing myself");
 
 	Close();
+}
+
+inline DepLibUV* Worker::GetDepLibUV(SignalsHandler* /*signalsHandler*/)
+{
+	MS_TRACE();
+
+	return this->depLibUV;
 }
 
 inline void Worker::OnSignal(SignalsHandler* /*signalsHandler*/, int signum)

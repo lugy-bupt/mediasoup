@@ -1,6 +1,7 @@
 #ifndef MS_RTC_WEBRTC_TRANSPORT_HPP
 #define MS_RTC_WEBRTC_TRANSPORT_HPP
 
+#include "DepLibUV.hpp"
 #include "RTC/DtlsTransport.hpp"
 #include "RTC/IceCandidate.hpp"
 #include "RTC/IceServer.hpp"
@@ -65,11 +66,13 @@ namespace RTC
 
 		/* Pure virtual methods inherited from RTC::UdpSocket::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(RTC::UdpSocket* socket) override;
 		void OnUdpSocketPacketReceived(
 		  RTC::UdpSocket* socket, const uint8_t* data, size_t len, const struct sockaddr* remoteAddr) override;
 
 		/* Pure virtual methods inherited from RTC::TcpServer::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(RTC::TcpServer* tcpServer) override;
 		void OnRtcTcpConnectionClosed(RTC::TcpServer* tcpServer, RTC::TcpConnection* connection) override;
 
 		/* Pure virtual methods inherited from RTC::TcpConnection::Listener. */
@@ -90,6 +93,7 @@ namespace RTC
 
 		/* Pure virtual methods inherited from RTC::DtlsTransport::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(const RTC::DtlsTransport* dtlsTransport) override;
 		void OnDtlsTransportConnecting(const RTC::DtlsTransport* dtlsTransport) override;
 		void OnDtlsTransportConnected(
 		  const RTC::DtlsTransport* dtlsTransport,

@@ -1,3 +1,4 @@
+#include "helpers.hpp"
 #include "common.hpp"
 #include "RTC/RTCP/FeedbackRtpNack.hpp"
 #include "RTC/RtpPacket.hpp"
@@ -13,6 +14,11 @@ SCENARIO("NACK and RTP packets retransmission", "[rtp][rtcp]")
 	class TestRtpStreamListener : public RtpStreamSend::Listener
 	{
 	public:
+		DepLibUV* GetDepLibUV(RtpStream* /*rtpStream*/) override
+		{
+			return helpers::getDepLibUV();
+		}
+
 		void OnRtpStreamScore(RtpStream* /*rtpStream*/, uint8_t /*score*/, uint8_t /*previousScore*/) override
 		{
 		}

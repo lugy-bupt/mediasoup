@@ -61,7 +61,7 @@ inline static void onShutdown(uv_shutdown_t* req, int /*status*/)
 
 /* Instance methods. */
 
-UnixStreamSocket::UnixStreamSocket(int fd, size_t bufferSize, UnixStreamSocket::Role role)
+UnixStreamSocket::UnixStreamSocket(DepLibUV* depLibUV, int fd, size_t bufferSize, UnixStreamSocket::Role role)
   : bufferSize(bufferSize), role(role)
 {
 	MS_TRACE_STD();
@@ -71,7 +71,7 @@ UnixStreamSocket::UnixStreamSocket(int fd, size_t bufferSize, UnixStreamSocket::
 	this->uvHandle       = new uv_pipe_t;
 	this->uvHandle->data = static_cast<void*>(this);
 
-	err = uv_pipe_init(DepLibUV::GetLoop(), this->uvHandle, 0);
+	err = uv_pipe_init(depLibUV->GetLoop(), this->uvHandle, 0);
 
 	if (err != 0)
 	{

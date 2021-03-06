@@ -18,6 +18,7 @@ namespace RTC
 		class Listener
 		{
 		public:
+			virtual DepLibUV* GetDepLibUV(RTC::TransportCongestionControlServer* tccServer) = 0;
 			virtual void OnTransportCongestionControlServerSendRtcpPacket(
 			  RTC::TransportCongestionControlServer* tccServer, RTC::RTCP::Packet* packet) = 0;
 		};
@@ -63,6 +64,7 @@ namespace RTC
 
 		/* Pure virtual methods inherited from Timer::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(Timer* timer) override;
 		void OnTimer(Timer* timer) override;
 
 	private:

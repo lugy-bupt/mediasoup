@@ -2,6 +2,7 @@
 #define MS_CHANNEL_UNIX_STREAM_SOCKET_HPP
 
 #include "common.hpp"
+#include "DepLibUV.hpp"
 #include "Channel/Request.hpp"
 #include "handles/UnixStreamSocket.hpp"
 #include <json.hpp>
@@ -14,6 +15,7 @@ namespace Channel
 		class Listener
 		{
 		public:
+			virtual DepLibUV* GetDepLibUV(ConsumerSocket* consumerSocket) = 0;
 			virtual void OnConsumerSocketMessage(ConsumerSocket* consumerSocket, char* msg, size_t msgLen) = 0;
 			virtual void OnConsumerSocketClosed(ConsumerSocket* consumerSocket) = 0;
 		};
@@ -35,7 +37,14 @@ namespace Channel
 	class ProducerSocket : public ::UnixStreamSocket
 	{
 	public:
-		ProducerSocket(int fd, size_t bufferSize);
+		class Listener
+		{
+		public:
+			virtual DepLibUV* GetDepLibUV(ProducerSocket* producerSocket) = 0;
+		};
+
+	public:
+		ProducerSocket(int fd, size_t bufferSize, Listener* listener);
 
 		/* Pure virtual methods inherited from ::UnixStreamSocket. */
 	public:
@@ -47,18 +56,19 @@ namespace Channel
 		}
 	};
 
-	class UnixStreamSocket : public ConsumerSocket::Listener
+	class UnixStreamSocket : public ConsumerSocket::Listener, public ProducerSocket::Listener
 	{
 	public:
 		class Listener
 		{
 		public:
+			virtual DepLibUV* GetDepLibUV(Channel::UnixStreamSocket* channel) = 0;
 			virtual void OnChannelRequest(Channel::UnixStreamSocket* channel, Channel::Request* request) = 0;
 			virtual void OnChannelClosed(Channel::UnixStreamSocket* channel) = 0;
 		};
 
 	public:
-		explicit UnixStreamSocket(int consumerFd, int producerFd);
+		explicit UnixStreamSocket(DepLibUV* depLibUV, int consumerFd, int producerFd);
 		virtual ~UnixStreamSocket();
 
 	public:
@@ -71,11 +81,17 @@ namespace Channel
 
 		/* Pure virtual methods inherited from ConsumerSocket::Listener. */
 	public:
+		DepLibUV* GetDepLibUV(ConsumerSocket* consumerSocket) override;
 		void OnConsumerSocketMessage(ConsumerSocket* consumerSocket, char* msg, size_t msgLen) override;
 		void OnConsumerSocketClosed(ConsumerSocket* consumerSocket) override;
 
+		/* Pure virtual methods inherited from ProducerSocket::Listener. */
+	public:
+		DepLibUV* GetDepLibUV(ProducerSocket* producerSocket) override;
+
 	private:
 		// Passed by argument.
+		DepLibUV* depLibUV{ nullptr };
 		Listener* listener{ nullptr };
 		// Others.
 		ConsumerSocket consumerSocket;

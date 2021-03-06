@@ -1072,6 +1072,13 @@ namespace RTC
 		Channel::Notifier::Emit(this->id, "layerschange", data);
 	}
 
+	inline DepLibUV* SvcConsumer::GetDepLibUV(RTC::RtpStream* /*rtpStream*/)
+	{
+		MS_TRACE();
+
+		return this->listener->GetDepLibUV(this);
+	}
+
 	inline void SvcConsumer::OnRtpStreamScore(
 	  RTC::RtpStream* /*rtpStream*/, uint8_t /*score*/, uint8_t /*previousScore*/)
 	{

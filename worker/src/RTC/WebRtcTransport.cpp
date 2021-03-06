@@ -1,6 +1,7 @@
 #define MS_CLASS "RTC::WebRtcTransport"
 // #define MS_LOG_DEV_LEVEL 3
 
+#include "DepLibUV.hpp"
 #include "RTC/WebRtcTransport.hpp"
 #include "Logger.hpp"
 #include "MediaSoupErrors.hpp"
@@ -1055,6 +1056,13 @@ namespace RTC
 		OnPacketReceived(&tuple, data, len);
 	}
 
+	inline DepLibUV* WebRtcTransport::GetDepLibUV(RTC::TcpServer* /*tcpServer*/)
+	{
+		MS_TRACE();
+
+		return this->listener->GetDepLibUV(this);
+	}
+
 	inline void WebRtcTransport::OnRtcTcpConnectionClosed(
 	  RTC::TcpServer* /*tcpServer*/, RTC::TcpConnection* connection)
 	{
@@ -1175,6 +1183,13 @@ namespace RTC
 		}
 	}
 
+	inline DepLibUV* WebRtcTransport::GetDepLibUV(const RTC::DtlsTransport* /*dtlsTransport*/)
+	{
+		MS_TRACE();
+
+		return this->listener->GetDepLibUV(this);
+	}
+
 	inline void WebRtcTransport::OnDtlsTransportConnecting(const RTC::DtlsTransport* /*dtlsTransport*/)
 	{
 		MS_TRACE();
@@ -1291,6 +1306,13 @@ namespace RTC
 
 		// Increase send transmission.
 		RTC::Transport::DataSent(len);
+	}
+
+	inline DepLibUV* WebRtcTransport::GetDepLibUV(RTC::UdpSocket* socket)
+	{
+		MS_TRACE();
+
+		return this->listener->GetDepLibUV(this);
 	}
 
 	inline void WebRtcTransport::OnDtlsTransportApplicationDataReceived(

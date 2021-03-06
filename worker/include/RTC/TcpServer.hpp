@@ -2,6 +2,7 @@
 #define MS_RTC_TCP_SERVER_HPP
 
 #include "common.hpp"
+#include "DepLibUV.hpp"
 #include "RTC/TcpConnection.hpp"
 #include "handles/TcpConnection.hpp"
 #include "handles/TcpServer.hpp"
@@ -15,6 +16,7 @@ namespace RTC
 		class Listener
 		{
 		public:
+			virtual DepLibUV* GetDepLibUV(RTC::TcpServer* tcpServer) = 0;
 			virtual void OnRtcTcpConnectionClosed(
 			  RTC::TcpServer* tcpServer, RTC::TcpConnection* connection) = 0;
 		};
@@ -25,6 +27,7 @@ namespace RTC
 
 		/* Pure virtual methods inherited from ::TcpServer. */
 	public:
+		DepLibUV* GetDepLibUV(::TcpConnection* connection) override;
 		void UserOnTcpConnectionAlloc() override;
 		void UserOnTcpConnectionClosed(::TcpConnection* connection) override;
 

@@ -36,6 +36,7 @@ namespace RTC
 		class Listener
 		{
 		public:
+			virtual DepLibUV* GetDepLibUV(RTC::TransportCongestionControlClient* tccClient) = 0;
 			virtual void OnTransportCongestionControlClientBitrates(
 			  RTC::TransportCongestionControlClient* tccClient,
 			  RTC::TransportCongestionControlClient::Bitrates& bitrates) = 0;
@@ -90,6 +91,7 @@ namespace RTC
 
 		/* Pure virtual methods inherited from RTC::Timer. */
 	public:
+		DepLibUV* GetDepLibUV(Timer* timer) override;
 		void OnTimer(Timer* timer) override;
 
 	private:

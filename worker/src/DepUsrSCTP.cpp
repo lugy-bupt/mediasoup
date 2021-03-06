@@ -49,6 +49,8 @@ inline static void sctpDebug(const char* format, ...)
 
 /* Static variables. */
 
+// TODO: Remove all of these and make them properties of the instance
+DepLibUV* DepUsrSCTP::depLibUV{ nullptr };
 DepUsrSCTP::Checker* DepUsrSCTP::checker{ nullptr };
 uint64_t DepUsrSCTP::numSctpAssociations{ 0u };
 uintptr_t DepUsrSCTP::nextSctpAssociationId{ 0u };
@@ -56,11 +58,13 @@ std::unordered_map<uintptr_t, RTC::SctpAssociation*> DepUsrSCTP::mapIdSctpAssoci
 
 /* Static methods. */
 
-void DepUsrSCTP::ClassInit()
+void DepUsrSCTP::ClassInit(DepLibUV* depLibUV)
 {
 	MS_TRACE();
 
 	MS_DEBUG_TAG(info, "usrsctp");
+
+	DepUsrSCTP::depLibUV = depLibUV;
 
 	usrsctp_init_nothreads(0, onSendSctpData, sctpDebug);
 
@@ -182,6 +186,13 @@ void DepUsrSCTP::Checker::Stop()
 	this->lastCalledAtMs = 0u;
 
 	this->timer->Stop();
+}
+
+DepLibUV* DepUsrSCTP::Checker::GetDepLibUV(Timer* /*timer*/)
+{
+	MS_TRACE();
+
+	return DepUsrSCTP::depLibUV;
 }
 
 void DepUsrSCTP::Checker::OnTimer(Timer* /*timer*/)
