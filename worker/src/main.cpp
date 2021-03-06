@@ -124,7 +124,7 @@ int main(int argc, char* argv[])
 		// Initialize static stuff.
 		DepOpenSSL::ClassInit();
 		DepLibSRTP::ClassInit();
-		DepUsrSCTP::ClassInit(depLibUV);
+		auto* depUsrSCTP = new DepUsrSCTP(depLibUV);
 		DepLibWebRTC::ClassInit();
 		Utils::Crypto::ClassInit();
 		RTC::DtlsTransport::ClassInit();
@@ -139,13 +139,13 @@ int main(int argc, char* argv[])
 		Worker worker(depLibUV, channel, payloadChannel);
 
 		delete depLibUV;
+		delete depUsrSCTP;
 
 		// Free static stuff.
 		DepLibSRTP::ClassDestroy();
 		Utils::Crypto::ClassDestroy();
 		DepLibWebRTC::ClassDestroy();
 		RTC::DtlsTransport::ClassDestroy();
-		DepUsrSCTP::ClassDestroy();
 
 		// Wait a bit so peding messages to stdout/Channel arrive to the Node
 		// process.
