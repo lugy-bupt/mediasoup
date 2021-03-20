@@ -174,7 +174,8 @@ void TcpConnectionHandler::Start()
 		MS_THROW_ERROR("error setting peer IP and port");
 }
 
-void TcpConnectionHandler::Write(const uint8_t* data, size_t len, TcpConnectionHandler::onSendCallback* cb)
+void TcpConnectionHandler::Write(
+  const uint8_t* data, size_t len, TcpConnectionHandler::onSendCallback* cb)
 {
 	MS_TRACE();
 
@@ -269,7 +270,11 @@ void TcpConnectionHandler::Write(const uint8_t* data, size_t len, TcpConnectionH
 }
 
 void TcpConnectionHandler::Write(
-  const uint8_t* data1, size_t len1, const uint8_t* data2, size_t len2, TcpConnectionHandler::onSendCallback* cb)
+  const uint8_t* data1,
+  size_t len1,
+  const uint8_t* data2,
+  size_t len2,
+  TcpConnectionHandler::onSendCallback* cb)
 {
 	MS_TRACE();
 

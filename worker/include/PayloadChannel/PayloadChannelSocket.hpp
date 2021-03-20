@@ -59,7 +59,8 @@ namespace PayloadChannel
 			  PayloadChannel::PayloadChannelSocket* payloadChannel,
 			  PayloadChannel::Notification* notification) = 0;
 			virtual void OnPayloadChannelRequest(
-			  PayloadChannel::PayloadChannelSocket* payloadChannel, PayloadChannel::PayloadChannelRequest* request) = 0;
+			  PayloadChannel::PayloadChannelSocket* payloadChannel,
+			  PayloadChannel::PayloadChannelRequest* request)                                         = 0;
 			virtual void OnPayloadChannelClosed(PayloadChannel::PayloadChannelSocket* payloadChannel) = 0;
 		};
 

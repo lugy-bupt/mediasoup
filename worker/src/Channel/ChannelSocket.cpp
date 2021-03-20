@@ -105,8 +105,7 @@ namespace Channel
 		this->producerSocket.Write(this->WriteBuffer, nsLen);
 	}
 
-	void ChannelSocket::OnConsumerSocketMessage(
-	  ConsumerSocket* /*consumerSocket*/, char* msg, size_t msgLen)
+	void ChannelSocket::OnConsumerSocketMessage(ConsumerSocket* /*consumerSocket*/, char* msg, size_t msgLen)
 	{
 		MS_TRACE_STD();
 

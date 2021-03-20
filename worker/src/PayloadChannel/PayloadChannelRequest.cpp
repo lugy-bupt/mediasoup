@@ -38,7 +38,9 @@ namespace PayloadChannel
 
 	/* Instance methods. */
 
-	PayloadChannelRequest::PayloadChannelRequest(PayloadChannel::PayloadChannelSocket* channel, json& jsonRequest) : channel(channel)
+	PayloadChannelRequest::PayloadChannelRequest(
+	  PayloadChannel::PayloadChannelSocket* channel, json& jsonRequest)
+	  : channel(channel)
 	{
 		MS_TRACE();
 

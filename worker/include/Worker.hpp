@@ -41,7 +41,8 @@ public:
 	  PayloadChannel::PayloadChannelSocket* payloadChannel,
 	  PayloadChannel::Notification* notification) override;
 	void OnPayloadChannelRequest(
-	  PayloadChannel::PayloadChannelSocket* payloadChannel, PayloadChannel::PayloadChannelRequest* request) override;
+	  PayloadChannel::PayloadChannelSocket* payloadChannel,
+	  PayloadChannel::PayloadChannelRequest* request) override;
 	void OnPayloadChannelClosed(PayloadChannel::PayloadChannelSocket* payloadChannel) override;
 
 	/* Methods inherited from SignalsHandler::Listener. */

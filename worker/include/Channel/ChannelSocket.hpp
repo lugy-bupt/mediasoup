@@ -53,8 +53,9 @@ namespace Channel
 		class Listener
 		{
 		public:
-			virtual void OnChannelRequest(Channel::ChannelSocket* channel, Channel::ChannelRequest* request) = 0;
-			virtual void OnChannelClosed(Channel::ChannelSocket* channel) = 0;
+			virtual void OnChannelRequest(
+			  Channel::ChannelSocket* channel, Channel::ChannelRequest* request) = 0;
+			virtual void OnChannelClosed(Channel::ChannelSocket* channel)        = 0;
 		};
 
 	public:

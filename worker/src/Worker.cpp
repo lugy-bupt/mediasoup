@@ -314,7 +314,8 @@ inline void Worker::OnPayloadChannelNotification(
 }
 
 inline void Worker::OnPayloadChannelRequest(
-  PayloadChannel::PayloadChannelSocket* /*payloadChannel*/, PayloadChannel::PayloadChannelRequest* request)
+  PayloadChannel::PayloadChannelSocket* /*payloadChannel*/,
+  PayloadChannel::PayloadChannelRequest* request)
 {
 	MS_TRACE();
 
