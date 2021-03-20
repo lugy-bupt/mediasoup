@@ -1,7 +1,7 @@
-#define MS_CLASS "Channel::UnixStreamSocket"
+#define MS_CLASS "Channel::ChannelSocket"
 // #define MS_LOG_DEV_LEVEL 3
 
-#include "Channel/UnixStreamSocket.hpp"
+#include "Channel/ChannelSocket.hpp"
 #include "Logger.hpp"
 #include "MediaSoupErrors.hpp"
 #include <cmath>   // std::ceil()
@@ -21,7 +21,7 @@ namespace Channel
 	static constexpr size_t NsPayloadMaxLen{ 4194304 };
 
 	/* Instance methods. */
-	UnixStreamSocket::UnixStreamSocket(int consumerFd, int producerFd)
+	ChannelSocket::ChannelSocket(int consumerFd, int producerFd)
 	  : consumerSocket(consumerFd, NsMessageMaxLen, this), producerSocket(producerFd, NsMessageMaxLen)
 	{
 		MS_TRACE_STD();
@@ -29,21 +29,21 @@ namespace Channel
 		this->WriteBuffer = static_cast<uint8_t*>(std::malloc(NsMessageMaxLen));
 	}
 
-	UnixStreamSocket::~UnixStreamSocket()
+	ChannelSocket::~ChannelSocket()
 	{
 		MS_TRACE_STD();
 
 		std::free(this->WriteBuffer);
 	}
 
-	void UnixStreamSocket::SetListener(Listener* listener)
+	void ChannelSocket::SetListener(Listener* listener)
 	{
 		MS_TRACE_STD();
 
 		this->listener = listener;
 	}
 
-	void UnixStreamSocket::Send(json& jsonMessage)
+	void ChannelSocket::Send(json& jsonMessage)
 	{
 		MS_TRACE_STD();
 
@@ -62,7 +62,7 @@ namespace Channel
 		SendImpl(message.c_str(), message.length());
 	}
 
-	void UnixStreamSocket::SendLog(char* message, size_t messageLen)
+	void ChannelSocket::SendLog(char* message, size_t messageLen)
 	{
 		MS_TRACE_STD();
 
@@ -79,7 +79,7 @@ namespace Channel
 		SendImpl(message, messageLen);
 	}
 
-	inline void UnixStreamSocket::SendImpl(const void* nsPayload, size_t nsPayloadLen)
+	inline void ChannelSocket::SendImpl(const void* nsPayload, size_t nsPayloadLen)
 	{
 		MS_TRACE_STD();
 
@@ -105,7 +105,7 @@ namespace Channel
 		this->producerSocket.Write(this->WriteBuffer, nsLen);
 	}
 
-	void UnixStreamSocket::OnConsumerSocketMessage(
+	void ChannelSocket::OnConsumerSocketMessage(
 	  ConsumerSocket* /*consumerSocket*/, char* msg, size_t msgLen)
 	{
 		MS_TRACE_STD();
@@ -113,7 +113,7 @@ namespace Channel
 		try
 		{
 			json jsonMessage = json::parse(msg, msg + msgLen);
-			auto* request    = new Channel::Request(this, jsonMessage);
+			auto* request    = new Channel::ChannelRequest(this, jsonMessage);
 
 			// Notify the listener.
 			try
@@ -142,7 +142,7 @@ namespace Channel
 		}
 	}
 
-	void UnixStreamSocket::OnConsumerSocketClosed(ConsumerSocket* /*consumerSocket*/)
+	void ChannelSocket::OnConsumerSocketClosed(ConsumerSocket* /*consumerSocket*/)
 	{
 		MS_TRACE_STD();
 

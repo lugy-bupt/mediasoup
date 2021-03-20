@@ -1,10 +1,10 @@
-#define MS_CLASS "PayloadChannel::UnixStreamSocket"
+#define MS_CLASS "PayloadChannel::PayloadChannelSocket"
 // #define MS_LOG_DEV_LEVEL 3
 
-#include "PayloadChannel/UnixStreamSocket.hpp"
+#include "PayloadChannel/PayloadChannelSocket.hpp"
 #include "Logger.hpp"
 #include "MediaSoupErrors.hpp"
-#include "PayloadChannel/Request.hpp"
+#include "PayloadChannel/PayloadChannelRequest.hpp"
 #include <cmath>   // std::ceil()
 #include <cstdio>  // sprintf()
 #include <cstring> // std::memcpy(), std::memmove()
@@ -22,7 +22,7 @@ namespace PayloadChannel
 	static constexpr size_t NsPayloadMaxLen{ 4194304 };
 
 	/* Instance methods. */
-	UnixStreamSocket::UnixStreamSocket(int consumerFd, int producerFd)
+	PayloadChannelSocket::PayloadChannelSocket(int consumerFd, int producerFd)
 	  : consumerSocket(consumerFd, NsMessageMaxLen, this), producerSocket(producerFd, NsMessageMaxLen)
 	{
 		MS_TRACE();
@@ -30,7 +30,7 @@ namespace PayloadChannel
 		this->WriteBuffer = (uint8_t*)std::malloc(NsMessageMaxLen);
 	}
 
-	UnixStreamSocket::~UnixStreamSocket()
+	PayloadChannelSocket::~PayloadChannelSocket()
 	{
 		MS_TRACE();
 
@@ -38,14 +38,14 @@ namespace PayloadChannel
 		delete this->ongoingNotification;
 	}
 
-	void UnixStreamSocket::SetListener(Listener* listener)
+	void PayloadChannelSocket::SetListener(Listener* listener)
 	{
 		MS_TRACE();
 
 		this->listener = listener;
 	}
 
-	void UnixStreamSocket::Send(json& jsonMessage, const uint8_t* payload, size_t payloadLen)
+	void PayloadChannelSocket::Send(json& jsonMessage, const uint8_t* payload, size_t payloadLen)
 	{
 		MS_TRACE();
 
@@ -71,7 +71,7 @@ namespace PayloadChannel
 		SendImpl(payload, payloadLen);
 	}
 
-	void UnixStreamSocket::Send(json& jsonMessage)
+	void PayloadChannelSocket::Send(json& jsonMessage)
 	{
 		MS_TRACE_STD();
 
@@ -90,7 +90,7 @@ namespace PayloadChannel
 		SendImpl(message.c_str(), message.length());
 	}
 
-	inline void UnixStreamSocket::SendImpl(const void* nsPayload, size_t nsPayloadLen)
+	inline void PayloadChannelSocket::SendImpl(const void* nsPayload, size_t nsPayloadLen)
 	{
 		MS_TRACE();
 
@@ -116,7 +116,7 @@ namespace PayloadChannel
 		this->producerSocket.Write(this->WriteBuffer, nsLen);
 	}
 
-	void UnixStreamSocket::OnConsumerSocketMessage(
+	void PayloadChannelSocket::OnConsumerSocketMessage(
 	  ConsumerSocket* /*consumerSocket*/, char* msg, size_t msgLen)
 	{
 		MS_TRACE();
@@ -124,12 +124,12 @@ namespace PayloadChannel
 		if (!this->ongoingNotification && !this->ongoingRequest)
 		{
 			json jsonData = json::parse(msg, msg + msgLen);
-			if (Request::IsRequest(jsonData))
+			if (PayloadChannelRequest::IsRequest(jsonData))
 			{
 				try
 				{
 					json jsonMessage     = json::parse(msg, msg + msgLen);
-					this->ongoingRequest = new PayloadChannel::Request(this, jsonMessage);
+					this->ongoingRequest = new PayloadChannel::PayloadChannelRequest(this, jsonMessage);
 				}
 				catch (const json::parse_error& error)
 				{
@@ -205,7 +205,7 @@ namespace PayloadChannel
 		}
 	}
 
-	void UnixStreamSocket::OnConsumerSocketClosed(ConsumerSocket* /*consumerSocket*/)
+	void PayloadChannelSocket::OnConsumerSocketClosed(ConsumerSocket* /*consumerSocket*/)
 	{
 		MS_TRACE();
 
